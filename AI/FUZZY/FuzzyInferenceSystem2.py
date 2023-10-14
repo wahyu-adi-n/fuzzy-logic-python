@@ -85,15 +85,16 @@ class Produksi:
 
 
 class Fuzzy:
-    def __init__(self, x, y) -> None:
+    def __init__(self, a, b, c) -> None:
         self.alpha = []
         self.z = []
         self.nk = {}
-        self.x = x
-        self.y = y
+        self.a = a
+        self.b = b
+        self.c = c
 
-    def cari_nilai_minimal(self, a, b) -> float:
-        return min(a, b)
+    def cari_nilai_minimal(self, a, b, c) -> float:
+        return min(a, b, c)
 
     def defuzzifikasi(self) -> float:
         alpha_z_product_sums = 0
@@ -142,10 +143,15 @@ class FuzzyTsukamoto(Fuzzy):
         bising = Kebisingan()
         cahaya = Pencahayaan()
 
-        self.nk["permintaan_naik"] = permintaan.naik(permintaan=self.x)
-        self.nk["permintaan_turun"] = permintaan.turun(permintaan=self.x)
-        self.nk["persediaan_banyak"] = persediaan.banyak(persediaan=self.y)
-        self.nk["persediaan_sedikit"] = persediaan.sedikit(persediaan=self.y)
+        self.nk["suhu_rendah"] = suhu.rendah(suhu=self.a)
+        self.nk["suhu_normal"] = suhu.normal(suhu=self.a)
+        self.nk["suhu_tinggi"] = suhu.tinggi(suhu=self.a)
+        self.nk["bising_tenang"] = bising.tenang(bising=self.b)
+        self.nk["bising_agakbising"] = bising.agakbising(bising=self.b)
+        self.nk["bising_bising"] = bising.bising(bising=self.b)
+        self.nk["cahaya_redup"] = cahaya.redup(cahaya=self.c)
+        self.nk["cahaya_agakterang"] = cahaya.agakterang(cahaya=self.c)
+        self.nk["cahaya_terang"] = cahaya.terang(cahaya=self.c)
 
         return self.nk
 
@@ -155,7 +161,9 @@ class FuzzyTsukamoto(Fuzzy):
         nk = self.hitung_nilai_keanggotaan()
 
         for _, rule in rules.items():
-            nilai_minimal = self.cari_nilai_minimal(a=nk[rule[0]], b=nk[rule[1]])
+            nilai_minimal = self.cari_nilai_minimal(
+                a=nk[rule[0]], b=nk[rule[1]], c=nk[rule[2]]
+            )
             self.alpha.append(nilai_minimal)
 
             if rule[-1] == "berkurang":
@@ -174,20 +182,49 @@ class FuzzyTsukamoto(Fuzzy):
 class FuzzySugeno(Fuzzy):
     def aturan(self) -> dict:
         return {
-            1: ["permintaan_turun", "persediaan_banyak", self.x - self.y],
-            2: ["permintaan_turun", "persediaan_sedikit", self.x],
-            3: ["permintaan_naik", "persediaan_banyak", self.x],
-            4: ["permintaan_naik", "persediaan_sedikit", 1.25 * self.x - self.y],
+            1: ["suhu_rendah", "bising_tenang", "cahaya_redup", 148.0],
+            2: ["suhu_rendah", "bising_tenang", "cahaya_agakterang", 150.9],
+            3: ["suhu_rendah", "bising_tenang", "cahaya_terang", 146.5],
+            4: ["suhu_rendah", "bising_agakbising", "cahaya_redup", 143.1],
+            5: ["suhu_rendah", "bising_agakbising", "cahaya_agakterang", 146.53],
+            6: ["suhu_rendah", "bising_agakbising", "cahaya_terang", 142.73],
+            7: ["suhu_rendah", "bising_bising", "cahaya_redup", 136.73],
+            8: ["suhu_rendah", "bising_bising", "cahaya_agakterang", 140.77],
+            9: ["suhu_rendah", "bising_bising", "cahaya_terang", 135.97],
+            10: ["suhu_normal", "bising_tenang", "cahaya_redup", 149.73],
+            11: ["suhu_normal", "bising_tenang", "cahaya_agakterang", 153.27],
+            12: ["suhu_normal", "bising_tenang", "cahaya_terang", 152.13],
+            13: ["suhu_normal", "bising_agakbising", "cahaya_redup", 148.0],
+            14: ["suhu_normal", "bising_agakbising", "cahaya_agakterang", 150.63],
+            15: ["suhu_normal", "bising_agakbising", "cahaya_terang", 147.63],
+            16: ["suhu_normal", "bising_bising", "cahaya_redup", 141.47],
+            17: ["suhu_normal", "bising_bising", "cahaya_agakterang", 145.67],
+            18: ["suhu_normal", "bising_bising", "cahaya_terang", 140.2],
+            19: ["suhu_tinggi", "bising_tenang", "cahaya_redup", 142.10],
+            20: ["suhu_tinggi", "bising_tenang", "cahaya_agakterang", 146.53],
+            21: ["suhu_tinggi", "bising_tenang", "cahaya_terang", 142.17],
+            22: ["suhu_tinggi", "bising_agakbising", "cahaya_redup", 138.7],
+            23: ["suhu_tinggi", "bising_agakbising", "cahaya_agakterang", 141.4],
+            24: ["suhu_tinggi", "bising_agakbising", "cahaya_terang", 138.3],
+            25: ["suhu_tinggi", "bising_bising", "cahaya_redup", 133.33],
+            26: ["suhu_tinggi", "bising_bising", "cahaya_agakterang", 138.33],
+            27: ["suhu_tinggi", "bising_bising", "cahaya_terang", 133.77],
         }
 
     def hitung_nilai_keanggotaan(self) -> dict:
-        permintaan = Permintaan()
-        persediaan = Persediaan()
+        suhu = Suhu()
+        bising = Kebisingan()
+        cahaya = Pencahayaan()
 
-        self.nk["permintaan_naik"] = permintaan.naik(permintaan=self.x)
-        self.nk["permintaan_turun"] = permintaan.turun(permintaan=self.x)
-        self.nk["persediaan_banyak"] = persediaan.banyak(persediaan=self.y)
-        self.nk["persediaan_sedikit"] = persediaan.sedikit(persediaan=self.y)
+        self.nk["suhu_rendah"] = suhu.rendah(suhu=self.a)
+        self.nk["suhu_normal"] = suhu.normal(suhu=self.a)
+        self.nk["suhu_tinggi"] = suhu.tinggi(suhu=self.a)
+        self.nk["bising_tenang"] = bising.tenang(bising=self.b)
+        self.nk["bising_agakbising"] = bising.agakbising(bising=self.b)
+        self.nk["bising_bising"] = bising.bising(bising=self.b)
+        self.nk["cahaya_redup"] = cahaya.redup(cahaya=self.c)
+        self.nk["cahaya_agakterang"] = cahaya.agakterang(cahaya=self.c)
+        self.nk["cahaya_terang"] = cahaya.terang(cahaya=self.c)
 
         return self.nk
 
@@ -196,7 +233,9 @@ class FuzzySugeno(Fuzzy):
         nk = self.hitung_nilai_keanggotaan()
 
         for _, rule in rules.items():
-            nilai_minimal = self.cari_nilai_minimal(a=nk[rule[0]], b=nk[rule[1]])
+            nilai_minimal = self.cari_nilai_minimal(
+                a=nk[rule[0]], b=nk[rule[1]], c=nk[rule[2]]
+            )
             self.alpha.append(nilai_minimal)
             nilai_agregasi = rule[-1]
             self.z.append(nilai_agregasi)
@@ -246,13 +285,14 @@ def main():
         except ValueError:
             logic = 1
 
-        permintaan = 4000
-        persediaan = 300
+        suhu = int(input("Masukkan Nilai Suhu: "))
+        bising = int(input("Masukkan Nilai Kebisingan: "))
+        cahaya = int(input("Masukkan Nilai Pencahayaan: "))
 
         if logic == 1:
             print("Fuzzy Tsukamoto")
             print("=" * 50)
-            tsukamoto = FuzzyTsukamoto(x=permintaan, y=persediaan)
+            tsukamoto = FuzzyTsukamoto(a=suhu, b=bising, c=cahaya)
             tsukamoto.fuzzifikasi()
             print(f"Fuzzy Out: {tsukamoto.defuzzifikasi()}")
 
@@ -260,7 +300,7 @@ def main():
             print("Fuzzy Sugeno")
             print("=" * 50)
 
-            sugeno = FuzzySugeno(x=permintaan, y=persediaan)
+            sugeno = FuzzySugeno(a=suhu, b=bising, c=cahaya)
             sugeno.fuzzifikasi()
             print(f"Fuzzy Out: {sugeno.defuzzifikasi()}")
 
