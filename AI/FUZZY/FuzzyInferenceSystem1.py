@@ -1,37 +1,41 @@
-class Permintaan:
-    def turun(self, mins=1000, maks=5000, permintaan=0):
-        if permintaan < mins:
+class Variable:
+    def kondisi1(self, mins, maks, x):
+        if x < mins:
             return 1
-        elif permintaan >= mins and permintaan <= maks:
-            return (maks - permintaan) / (maks - mins)
+        elif x >= mins and x <= maks:
+            return (maks - x) / (maks - mins)
         else:
             return 0
 
-    def naik(self, mins=1000, maks=5000, permintaan=0):
-        if permintaan < mins:
+    def kondisi2(self, mins, maks, x):
+        if x < mins:
             return 0
-        elif permintaan >= mins and permintaan <= maks:
-            return (permintaan - mins) / (maks - mins)
+        elif x >= mins and x <= maks:
+            return (x - mins) / (maks - mins)
         else:
             return 1
 
 
-class Persediaan:
-    def sedikit(self, mins=100, maks=600, persediaan=0):
-        if persediaan < mins:
-            return 1
-        elif persediaan >= mins and persediaan <= maks:
-            return (maks - persediaan) / (maks - mins)
-        else:
-            return 0
+class Permintaan(Variable):
+    def __init__(self) -> None:
+        self.var = Variable()
 
-    def banyak(self, mins=100, maks=600, persediaan=0):
-        if persediaan < mins:
-            return 0
-        elif persediaan >= mins and persediaan <= maks:
-            return (persediaan - mins) / (maks - mins)
-        else:
-            return 1
+    def turun(self, permintaan):
+        return self.var.kondisi1(mins=1000, maks=5000, x=permintaan)
+
+    def naik(self, permintaan=0):
+        return self.var.kondisi2(mins=1000, maks=5000, x=permintaan)
+
+
+class Persediaan(Variable):
+    def __init__(self) -> None:
+        self.var = Variable()
+
+    def sedikit(self, persediaan):
+        return self.var.kondisi1(mins=100, maks=600, x=persediaan)
+
+    def banyak(self, persediaan):
+        return self.var.kondisi2(mins=100, maks=600, x=persediaan)
 
 
 class Produksi:

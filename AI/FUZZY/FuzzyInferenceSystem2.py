@@ -1,91 +1,65 @@
-class Suhu:
-    def rendah(self, mins=18, median=22, maks=26, suhu=0):
-        if suhu < mins or suhu > maks:
+class Variable:
+    def kondisi(self, mins, median, maks, x):
+        if x < mins or x > maks:
             return 0
-        elif suhu >= mins and suhu <= median:
-            return (suhu - mins) / (median - mins)
-        elif suhu >= median and suhu <= maks:
-            return (maks - suhu) / (maks - median)
-
-    def normal(self, mins=22, median=26, maks=32, suhu=0):
-        if suhu < mins or suhu > maks:
-            return 0
-        elif suhu >= mins and suhu <= median:
-            return (suhu - mins) / (median - mins)
-        elif suhu >= median and suhu <= maks:
-            return (maks - suhu) / (maks - median)
-
-    def tinggi(self, mins=26, median=32, maks=38, suhu=0):
-        if suhu < mins or suhu > maks:
-            return 0
-        elif suhu >= mins and suhu <= median:
-            return (suhu - mins) / (median - mins)
-        elif suhu >= median and suhu <= maks:
-            return (maks - suhu) / (maks - median)
+        elif x >= mins and x <= median:
+            return (x - mins) / (median - mins)
+        elif x >= median and x <= maks:
+            return (maks - x) / (maks - median)
 
 
-class Kebisingan:
-    def tenang(self, mins=35, median=55, maks=75, bising=0):
-        if bising < mins or bising > maks:
-            return 0
-        elif bising >= mins and bising <= median:
-            return (bising - mins) / (median - mins)
-        elif bising >= median and bising <= maks:
-            return (maks - bising) / (maks - median)
+class Suhu(Variable):
+    def __init__(self) -> None:
+        self.var = Variable()
 
-    def agakbising(self, mins=55, median=75, maks=90, bising=0):
-        if bising < mins or bising > maks:
-            return 0
-        elif bising >= mins and bising <= median:
-            return (bising - mins) / (median - mins)
-        elif bising >= median and bising <= maks:
-            return (maks - bising) / (maks - median)
+    def rendah(self, suhu):
+        return self.var.kondisi(mins=18, median=22, maks=26, x=suhu)
 
-    def bising(self, mins=75, median=90, maks=105, bising=0):
-        if bising < mins or bising > maks:
-            return 0
-        elif bising >= mins and bising <= median:
-            return (bising - mins) / (median - mins)
-        elif bising >= median and bising <= maks:
-            return (maks - bising) / (maks - median)
+    def normal(self, suhu):
+        return self.var.kondisi(mins=22, median=26, maks=32, x=suhu)
+
+    def tinggi(self, suhu):
+        return self.var.kondisi(mins=26, median=32, maks=38, x=suhu)
 
 
-class Pencahayaan:
-    def redup(self, mins=0, median=150, maks=300, cahaya=0):
-        if cahaya < mins or cahaya > maks:
-            return 0
-        elif cahaya >= mins and cahaya <= median:
-            return (cahaya - mins) / (median - mins)
-        elif cahaya >= median and cahaya <= maks:
-            return (maks - cahaya) / (maks - median)
+class Kebisingan(Variable):
+    def __init__(self) -> None:
+        self.var = Variable()
 
-    def agakterang(self, mins=150, median=300, maks=500, cahaya=0):
-        if cahaya < mins or cahaya > maks:
-            return 0
-        elif cahaya >= mins and cahaya <= median:
-            return (cahaya - mins) / (median - mins)
-        elif cahaya >= median and cahaya <= maks:
-            return (maks - cahaya) / (maks - median)
+    def tenang(self, bising):
+        return self.var.kondisi(mins=35, median=55, maks=75, x=bising)
 
-    def terang(self, mins=300, median=500, maks=700, cahaya=0):
-        if cahaya < mins or cahaya > maks:
-            return 0
-        elif cahaya >= mins and cahaya <= median:
-            return (cahaya - mins) / (median - mins)
-        elif cahaya >= median and cahaya <= maks:
-            return (maks - cahaya) / (maks - median)
+    def agakbising(self, bising):
+        return self.var.kondisi(mins=55, median=75, maks=90, x=bising)
+
+    def bising(self, bising):
+        return self.var.kondisi(mins=75, median=90, maks=105, x=bising)
+
+
+class Pencahayaan(Variable):
+    def __init__(self) -> None:
+        self.var = Variable()
+
+    def redup(self, cahaya):
+        return self.var.kondisi(mins=0, median=150, maks=300, x=cahaya)
+
+    def agakterang(self, cahaya):
+        return self.var.kondisi(mins=150, median=300, maks=500, x=cahaya)
+
+    def terang(self, cahaya):
+        return self.var.kondisi(mins=300, median=500, maks=700, x=cahaya)
 
 
 class Produksi:
-    def agregasi_berkurang(self, mins=143, maks=153, nilai_minimal=0):
+    def agregasi_berkurang(self, mins, maks, nilai_minimal):
         return maks - ((maks - mins) * nilai_minimal)
 
-    def agregasi_bertambah(self, mins=143, maks=153, nilai_minimal=0):
+    def agregasi_bertambah(self, mins, maks, nilai_minimal):
         return mins + ((maks - mins) * nilai_minimal)
 
 
 class Fuzzy:
-    def __init__(self, a, b, c) -> None:
+    def __init__(self, a, b, c):
         self.alpha = []
         self.z = []
         self.nk = {}
@@ -93,8 +67,8 @@ class Fuzzy:
         self.b = b
         self.c = c
 
-    def cari_nilai_minimal(self, a, b, c) -> float:
-        return min(a, b, c)
+    def cari_nilai_minimal(self, x, y, z) -> float:
+        return min(x, y, z)
 
     def defuzzifikasi(self) -> float:
         alpha_z_product_sums = 0
@@ -102,11 +76,14 @@ class Fuzzy:
         for i in range(len(self.alpha)):
             alpha_z_product_sums += self.alpha[i] * self.z[i]
             alpha_sums += self.alpha[i]
-        z_akhir = alpha_z_product_sums // alpha_sums
+        z_akhir = alpha_z_product_sums / alpha_sums
         return z_akhir
 
 
 class FuzzyTsukamoto(Fuzzy):
+    def __init__(self, a, b, c):
+        super().__init__(a, b, c)
+
     def aturan(self) -> dict:
         return {
             1: ["suhu_rendah", "bising_tenang", "cahaya_redup", "bertambah"],
@@ -162,17 +139,17 @@ class FuzzyTsukamoto(Fuzzy):
 
         for _, rule in rules.items():
             nilai_minimal = self.cari_nilai_minimal(
-                a=nk[rule[0]], b=nk[rule[1]], c=nk[rule[2]]
+                x=nk[rule[0]], y=nk[rule[1]], z=nk[rule[2]]
             )
             self.alpha.append(nilai_minimal)
 
             if rule[-1] == "berkurang":
                 nilai_agregasi = produksi.agregasi_berkurang(
-                    nilai_minimal=nilai_minimal
+                    mins=143, maks=153, nilai_minimal=nilai_minimal
                 )
             elif rule[-1] == "bertambah":
                 nilai_agregasi = produksi.agregasi_bertambah(
-                    nilai_minimal=nilai_minimal
+                    mins=143, maks=153, nilai_minimal=nilai_minimal
                 )
             else:
                 raise NotImplementedError
@@ -180,6 +157,9 @@ class FuzzyTsukamoto(Fuzzy):
 
 
 class FuzzySugeno(Fuzzy):
+    def __init__(self, a, b, c):
+        super().__init__(a, b, c)
+
     def aturan(self) -> dict:
         return {
             1: ["suhu_rendah", "bising_tenang", "cahaya_redup", 148.0],
@@ -234,7 +214,7 @@ class FuzzySugeno(Fuzzy):
 
         for _, rule in rules.items():
             nilai_minimal = self.cari_nilai_minimal(
-                a=nk[rule[0]], b=nk[rule[1]], c=nk[rule[2]]
+                x=nk[rule[0]], y=nk[rule[1]], z=nk[rule[2]]
             )
             self.alpha.append(nilai_minimal)
             nilai_agregasi = rule[-1]
@@ -242,34 +222,62 @@ class FuzzySugeno(Fuzzy):
 
 
 class FuzzyMamdani(Fuzzy):
+    def __init__(self, a, b, c):
+        super().__init__(a, b, c)
+
     def aturan(self) -> dict:
         return {
-            1: ["permintaan_turun", "persediaan_banyak", "berkurang"],
-            2: ["permintaan_turun", "persediaan_sedikit", "berkurang"],
-            3: ["permintaan_naik", "persediaan_banyak", "bertambah"],
-            4: ["permintaan_naik", "persediaan_sedikit", "bertambah"],
+            1: ["suhu_rendah", "bising_tenang", "cahaya_redup", "bertambah"],
+            2: ["suhu_rendah", "bising_tenang", "cahaya_agakterang", "bertambah"],
+            3: ["suhu_rendah", "bising_tenang", "cahaya_terang", "bertambah"],
+            4: ["suhu_rendah", "bising_agakbising", "cahaya_redup", "bertambah"],
+            5: ["suhu_rendah", "bising_agakbising", "cahaya_agakterang", "bertambah"],
+            6: ["suhu_rendah", "bising_agakbising", "cahaya_terang", "berkurang"],
+            7: ["suhu_rendah", "bising_bising", "cahaya_redup", "berkurang"],
+            8: ["suhu_rendah", "bising_bising", "cahaya_agakterang", "berkurang"],
+            9: ["suhu_rendah", "bising_bising", "cahaya_terang", "berkurang"],
+            10: ["suhu_normal", "bising_tenang", "cahaya_redup", "bertambah"],
+            11: ["suhu_normal", "bising_tenang", "cahaya_agakterang", "bertambah"],
+            12: ["suhu_normal", "bising_tenang", "cahaya_terang", "bertambah"],
+            13: ["suhu_normal", "bising_agakbising", "cahaya_redup", "bertambah"],
+            14: ["suhu_normal", "bising_agakbising", "cahaya_agakterang", "bertambah"],
+            15: ["suhu_normal", "bising_agakbising", "cahaya_terang", "bertambah"],
+            16: ["suhu_normal", "bising_bising", "cahaya_redup", "berkurang"],
+            17: ["suhu_normal", "bising_bising", "cahaya_agakterang", "bertambah"],
+            18: ["suhu_normal", "bising_bising", "cahaya_terang", "berkurang"],
+            19: ["suhu_tinggi", "bising_tenang", "cahaya_redup", "berkurang"],
+            20: ["suhu_tinggi", "bising_tenang", "cahaya_agakterang", "bertambah"],
+            21: ["suhu_tinggi", "bising_tenang", "cahaya_terang", "berkurang"],
+            22: ["suhu_tinggi", "bising_agakbising", "cahaya_redup", "berkurang"],
+            23: ["suhu_tinggi", "bising_agakbising", "cahaya_agakterang", "berkurang"],
+            24: ["suhu_tinggi", "bising_agakbising", "cahaya_terang", "berkurang"],
+            25: ["suhu_tinggi", "bising_bising", "cahaya_redup", "berkurang"],
+            26: ["suhu_tinggi", "bising_bising", "cahaya_agakterang", "berkurang"],
+            27: ["suhu_tinggi", "bising_bising", "cahaya_terang", "berkurang"],
         }
 
     def hitung_nilai_keanggotaan(self) -> dict:
-        permintaan = Permintaan()
-        persediaan = Persediaan()
+        suhu = Suhu()
+        bising = Kebisingan()
+        cahaya = Pencahayaan()
 
-        self.nk["permintaan_naik"] = permintaan.naik(permintaan=self.x)
-        self.nk["permintaan_turun"] = permintaan.turun(permintaan=self.x)
-        self.nk["persediaan_banyak"] = persediaan.banyak(persediaan=self.y)
-        self.nk["persediaan_sedikit"] = persediaan.sedikit(persediaan=self.y)
+        self.nk["suhu_rendah"] = suhu.rendah(suhu=self.a)
+        self.nk["suhu_normal"] = suhu.normal(suhu=self.a)
+        self.nk["suhu_tinggi"] = suhu.tinggi(suhu=self.a)
+        self.nk["bising_tenang"] = bising.tenang(bising=self.b)
+        self.nk["bising_agakbising"] = bising.agakbising(bising=self.b)
+        self.nk["bising_bising"] = bising.bising(bising=self.b)
+        self.nk["cahaya_redup"] = cahaya.redup(cahaya=self.c)
+        self.nk["cahaya_agakterang"] = cahaya.agakterang(cahaya=self.c)
+        self.nk["cahaya_terang"] = cahaya.terang(cahaya=self.c)
 
         return self.nk
 
     def fuzzifikasi(self):
-        rules = self.aturan()
-        nk = self.hitung_nilai_keanggotaan()
+        pass
 
-        for _, rule in rules.items():
-            nilai_minimal = self.cari_nilai_minimal(a=nk[rule[0]], b=nk[rule[1]])
-            self.alpha.append(nilai_minimal)
-            nilai_agregasi = rule[-1]
-            self.z.append(nilai_agregasi)
+    def defuzzifikasi(self):
+        pass
 
 
 def main():
@@ -290,26 +298,26 @@ def main():
         cahaya = int(input("Masukkan Nilai Pencahayaan: "))
 
         if logic == 1:
-            print("Fuzzy Tsukamoto")
+            print("\nFuzzy Tsukamoto")
             print("=" * 50)
             tsukamoto = FuzzyTsukamoto(a=suhu, b=bising, c=cahaya)
             tsukamoto.fuzzifikasi()
-            print(f"Fuzzy Out: {tsukamoto.defuzzifikasi()}")
+            print(f"Fuzzy Out: {tsukamoto.defuzzifikasi():.2f}")
 
         elif logic == 2:
-            print("Fuzzy Sugeno")
+            print("\nFuzzy Sugeno")
             print("=" * 50)
 
             sugeno = FuzzySugeno(a=suhu, b=bising, c=cahaya)
             sugeno.fuzzifikasi()
-            print(f"Fuzzy Out: {sugeno.defuzzifikasi()}")
+            print(f"Fuzzy Out: {sugeno.defuzzifikasi():.2f}")
 
         elif logic == 3:
-            print("Fuzzy Mamdani")
+            print("\nFuzzy Mamdani")
             print("=" * 50)
-            # mamdani = FuzzyMamdani(x=permintaan, y=persediaan)
-            # mamdani.fuzzifikasi()
-            # print(f"Fuzzy Out: {mamdani.defuzzifikasi()}")
+            mamdani = FuzzyMamdani(a=suhu, b=bising, c=cahaya)
+            mamdani.fuzzifikasi()
+            # print(f"Fuzzy Out: {mamdani.defuzzifikasi():.2f}")
         else:
             print("FUZZY INFERENCE SYSTEM")
             break
