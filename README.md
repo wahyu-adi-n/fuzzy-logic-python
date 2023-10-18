@@ -1,2 +1,4 @@
-# Master-Repo
-## This is for any resource, task, project while pursuing Master Degree on Informatics Dian Nuswantoro University
+# Fuzzy Logic - Fuzzy Inference System with Python
+## 1. Fuzzy Tsukamoto
+## 2. Fuzzy Sugeno
+## 3. Fuzzy Mamdani (On Progress)
