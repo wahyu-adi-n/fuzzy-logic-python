@@ -192,6 +192,8 @@ def main():
             print("=" * 50)
             tsukamoto = FuzzyTsukamoto(x=permintaan, y=persediaan)
             tsukamoto.fuzzifikasi()
+            print(tsukamoto.alpha)
+            print(tsukamoto.hitung_nilai_keanggotaan())
             print(f"Fuzzy Out: {tsukamoto.defuzzifikasi()}")
 
         elif logic == 2:
